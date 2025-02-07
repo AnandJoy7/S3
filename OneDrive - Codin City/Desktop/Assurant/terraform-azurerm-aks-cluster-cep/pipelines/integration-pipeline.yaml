@@ -1,0 +1,34 @@
+trigger:
+  branches:
+    include:
+    - master
+    - hotfix/*
+    - preview/*
+  paths:
+    exclude:
+    - README.md
+    
+resources:
+  repositories:
+  - repository: pipeline-templates
+    type: git
+    name: GT.ICS-Cloud Planning/vdc-orchestration-pipeline-templates
+    ref: master
+variables:
+- name: scriptsRepoName
+  value: $[ resources.repositories['pipeline-templates'].name ]
+- name: scriptsRepoRef
+  value: $[ resources.repositories['pipeline-templates'].ref ]
+- group: TFE-Terratest-KV
+extends:
+  template: infrastructure/module-pipeline.yaml@pipeline-templates
+  parameters:
+    tfeToken: $(TFE-TOKEN)
+    distributedTerratest: false
+    moduleProductCategory: tfe-module-spoke-services
+    majorVersion: 3
+    minorVersion: 100
+    tfVersion: 1.3.9
+    tflintVersion: 0.42.2
+    poolName: 'CEP-Pool-GF-Prod'
+    azureSubscriptionSE: 'Assurant SPOKE VDC Model'
